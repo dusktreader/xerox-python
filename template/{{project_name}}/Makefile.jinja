@@ -1,7 +1,7 @@
 .ONESHELL:
 .DEFAULT_GOAL:=help
 SHELL:=/bin/bash
-PACKAGE_TARGET:=src/{{module_name}}
+PACKAGE_TARGET:=src/{{ module_name }}
 
 
 # ==== Helpers =========================================================================================================
@@ -46,7 +46,7 @@ qa/full: qa/test qa/lint qa/types  ## Run the full set of quality checks
 	@echo "All quality checks pass!"
 
 .PHONY: qa/format
-qa/format:  ## RUn code formatter
+qa/format:  ## Run code formatter
 	uv run ruff format ${PACKAGE_TARGET} tests
 
 
@@ -58,3 +58,17 @@ docs/build:  ## Build the documentation
 .PHONY: docs/serve
 docs/serve:  ## Build the docs and start a local dev server
 	uv run mkdocs serve --config-file=docs/mkdocs.yaml --dev-addr=localhost:10000
+
+
+# ==== App Commands ====================================================================================================
+.PHONY: app/serve
+app/serve:  ## Run a local development server
+	uv run uvicorn {{ module_name }}.main:api --host=0.0.0.0 --port=5000 --reload --debug
+
+.PHONY: app/debug
+app/debug:  ## Run a local development server in debug mode
+	uv run debugpy --listen localhost:5678 -m uvicorn --host=0.0.0.0 --port=5000 --reload {{ module_name }}.main:api
+
+.PHONY: app/repl
+app/repl:  ## Run an ipython instance with an httpx client prepared
+	uv run ipython -c 'import httpx; client = httpx.Client(base_url="http://localhost:5000", timeout=300)' -i

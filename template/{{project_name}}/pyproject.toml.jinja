@@ -9,7 +9,16 @@ readme = "README.md"
 license-files = ["LICENSE.md"]
 
 requires-python = ">={{ python_versions[0] }}, ~={{ python_versions[-1] }}"
-dependencies = []
+
+dependencies = [
+    "auto-name-enum~=3.0",
+    "fastapi~=0.115",
+    "fastapi-buzz~=0.1",
+    "loguru~=0.7",
+    "py-buzz~=7.0",
+    "pydantic-settings~=2.8",
+    "whenever~=0.7",
+]
 
 
 [project.urls]
@@ -33,6 +42,11 @@ dev = [
     "pytest-random-order~=1.1",
     "ruff~=0.11",
     "typos~=1.31",
+    "time-machine~=2.16",
+    "uvicorn~=0.34",
+    "logot[loguru,pytest]~=1.3",
+    "debugpy~=1.8",
+    "httpx~=0.28",
 ]
 
 
@@ -58,6 +72,7 @@ src = ["src/{{ module_name }}", "tests"]
 
 
 [tool.mypy]
+plugins = ["pydantic.mypy"]
 pretty = true
 files = ["src/{{ module_name }}", "tests"]
 
@@ -74,7 +89,10 @@ reportUnusedCallResult = false
 
 
 [tool.typos.default]
-extend-ignore-identifiers-re = []
+extend-ignore-identifiers-re = [
+    "ane_auto",
+    "function_ser_schema",
+]
 
 
 [tool.hatch.build.targets.wheel]

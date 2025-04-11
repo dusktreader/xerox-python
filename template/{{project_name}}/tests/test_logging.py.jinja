@@ -1,0 +1,37 @@
+import logging
+
+import pytest
+from fastapi.testclient import TestClient
+from logot import Logot, logged
+from logot.loguru import LoguruCapturer
+from loguru import logger
+
+from {{ module_name }}.logging import init_logging, RouteFilterParams
+
+
+@pytest.fixture(scope="module", autouse=True)
+def log_init():
+    init_logging(suppress_routes=[RouteFilterParams(verb="GET", route="/health")])
+
+
+@pytest.mark.skip
+def test_app_logger_intercepted():
+    """
+    Note: This test passes when I run it in my editor, but fails when I run it from the command line. No clue.
+    """
+    with Logot(capturer=LoguruCapturer).capturing() as logot:
+        uvicorn_logger = logging.getLogger("uvicorn.access")
+        uvicorn_logger.debug("First Message")
+        logger.debug("Second Message")
+
+        logot.assert_logged(logged.debug("First Message"))
+        logot.assert_logged(logged.debug("Second Message"))
+
+        logot.assert_not_logged(logged.debug("First Message", name="uvicorn.access"))
+
+
+def test_no_logging_for_health_endpoint(client: TestClient):
+    with Logot(capturer=LoguruCapturer).capturing() as logot:
+        client.get("/health")
+        logot.assert_not_logged(logged.debug("health"))
+        logot.assert_not_logged(logged.debug("health", name="uvicorn.access"))

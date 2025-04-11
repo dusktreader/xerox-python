@@ -1,12 +1,56 @@
-from textwrap import dedent
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from loguru import logger
+from starlette.middleware.cors import CORSMiddleware
+
+from {{ module_name }}.config import settings
+from {{ module_name }}.constants import DeployEnv
+from {{ module_name }}.exceptions import {{ module_name.split('_')|map('capitalize')|join }}Error
+from {{ module_name }}.logging import init_logging, RouteFilterParams
+from {{ module_name }}.middleware.track_requests import TrackRequestsMiddleware
+from {{ module_name }}.version import get_version
+from {{ module_name }}.routers import health_router
+from {{ module_name }}.routers import info_router
 
 
-def main():
-    print(
-        dedent(
-            """
-            The only way you can get good, unless you're a genius, is to copy. That's the best thing. Just steal.
-            --Ritchie Blackmore
-            """
-        ).strip()
-    )
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    init_logging(suppress_routes=[RouteFilterParams(verb="GET", route="/health")])
+    yield
+
+
+api = FastAPI(
+    title="{{ module_name.split('-')|map('capitalize')|join(' ') }} API",
+    version=get_version(),
+    contact={
+        "name": "{{ author_name }}",
+        "url": "https://github.com/{{ github_account }}",
+        "email": "{{ author_email }}",
+    },
+    license_info={
+        "name": "MIT License",
+        "url": "https://github.com/{{ github_account }}/{{ project_name }}/blob/main/LICENSE.md",
+    },
+    lifespan=lifespan,
+)
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+api.add_exception_handler(*{{ module_name.split('_')|map('capitalize')|join }}Error.build_error_handler())
+api.include_router(health_router)
+if settings.DEPLOY_ENV not in (DeployEnv.STAGING, DeployEnv.PRODUCTION):
+    api.add_middleware(TrackRequestsMiddleware)
+    api.include_router(info_router)
+
+
+@api.exception_handler(RequestValidationError)
+async def validation_exception_handler(_: Request, err: RequestValidationError):
+    logger.error("There was an error serializing a response: {err}")
+    raise err
