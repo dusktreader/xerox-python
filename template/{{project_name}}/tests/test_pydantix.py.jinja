@@ -1,0 +1,34 @@
+from typing import Annotated
+
+import pytest
+from pydantic import BaseModel, ValidationError
+from whenever import TimeDelta
+
+from {{ module_name }}.pydantix import TimeDeltaAnnotation
+
+
+class DummyModel(BaseModel):
+    span: Annotated[TimeDelta, TimeDeltaAnnotation]
+
+
+def test_validate__time_delta_instance():
+    span = TimeDelta.parse_common_iso("PT1S")
+    instance = DummyModel(span=span)
+    assert instance.span == span
+
+
+def test_validate__python_timedelta_instance():
+    span = TimeDelta.parse_common_iso("PT1S")
+    instance = DummyModel(span=span.py_timedelta())  # pyright: ignore[reportArgumentType]
+    assert instance.span == span
+
+
+def test_validate__string():
+    span = TimeDelta.parse_common_iso("PT1S")
+    instance = DummyModel(span="PT1S")  # pyright: ignore[reportArgumentType]
+    assert instance.span == span
+
+
+def test_validate__failure():
+    with pytest.raises(ValidationError, match="Couldn't validate"):
+        DummyModel(span=13)  # pyright: ignore[reportArgumentType]

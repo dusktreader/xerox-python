@@ -1,0 +1,41 @@
+from http import HTTPStatus
+
+from flask.testing import FlaskClient
+from whenever import TimeDelta
+
+from {{ module_name }}.config import settings
+from {{ module_name }}.schemas.info import stats, RouteStats
+
+
+def test_fetch_config(client: FlaskClient):
+    response = client.get("/info/config")
+    assert response.status_code == HTTPStatus.OK
+    assert response.json == settings.model_dump(mode="json")
+
+
+def test_fetch_stats(client: FlaskClient):
+    """
+    Test that the fetch_stats route gathers stats correctly
+
+    Note that the request to /info/stats is not included in the stats this is because the response with the stats is
+    already packaged before the middleware can update the stats with the latest call.
+    """
+    stats.reset()
+    stats.total_request_time = TimeDelta.parse_common_iso("PT21H37M")
+    stats.total_requests = 42
+    stats.route_stats["/info/config"] = RouteStats(
+        requests=7,
+        request_time=TimeDelta.parse_common_iso("PT7M11S"),
+    )
+    response = client.get("/info/stats")
+    assert response.status_code == HTTPStatus.OK
+    assert response.json == dict(
+        total_request_time="PT21H37M",
+        total_requests=42,
+        route_stats={
+            "/info/config": dict(
+                requests=7,
+                request_time="PT7M11S",
+            ),
+        },
+    )

@@ -1,0 +1,60 @@
+from whenever import TimeDelta
+
+from {{ module_name }}.schemas.info import Stats, RouteStats
+
+
+def test_update():
+    stats = Stats()
+
+    assert stats.total_requests == 0
+    assert stats.total_request_time == TimeDelta()
+    assert stats.route_stats == {}
+
+    stats.update("/test1", TimeDelta.parse_common_iso("PT1S"))
+
+    assert stats.total_requests == 1
+    assert stats.total_request_time == TimeDelta.parse_common_iso("PT1S")
+    assert stats.route_stats == {
+        "/test1": RouteStats(
+            requests=1,
+            request_time=TimeDelta.parse_common_iso("PT1S"),
+        ),
+    }
+
+    stats.update("/test2", TimeDelta.parse_common_iso("PT2M"))
+
+    assert stats.total_requests == 2
+    assert stats.total_request_time == TimeDelta.parse_common_iso("PT2M1S")
+    assert stats.route_stats == {
+        "/test1": RouteStats(
+            requests=1,
+            request_time=TimeDelta.parse_common_iso("PT1S"),
+        ),
+        "/test2": RouteStats(
+            requests=1,
+            request_time=TimeDelta.parse_common_iso("PT2M"),
+        ),
+    }
+
+
+def test_reset():
+    stats = Stats(
+        total_requests=2,
+        total_request_time=TimeDelta.parse_common_iso("PT2M1S"),
+        route_stats={
+            "/test1": RouteStats(
+                requests=1,
+                request_time=TimeDelta.parse_common_iso("PT1S"),
+            ),
+            "/test2": RouteStats(
+                requests=1,
+                request_time=TimeDelta.parse_common_iso("PT2M"),
+            ),
+        },
+    )
+
+    stats.reset()
+
+    assert stats.total_requests == 0
+    assert stats.total_request_time == TimeDelta()
+    assert stats.route_stats == {}

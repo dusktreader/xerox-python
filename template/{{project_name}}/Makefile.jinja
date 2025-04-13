@@ -1,7 +1,7 @@
 .ONESHELL:
 .DEFAULT_GOAL:=help
 SHELL:=/bin/bash
-PACKAGE_TARGET:=src/{{module_name}}
+PACKAGE_TARGET:=src/{{ module_name }}
 
 
 # ==== Helpers =========================================================================================================
@@ -58,3 +58,17 @@ docs/build:  ## Build the documentation
 .PHONY: docs/serve
 docs/serve:  ## Build the docs and start a local dev server
 	uv run mkdocs serve --config-file=docs/mkdocs.yaml --dev-addr=localhost:10000
+
+
+# ==== App Commands ====================================================================================================
+.PHONY: app/serve
+app/serve:  ## Run a local development server
+	uv run flask --app {{ module_name }}.main:create_app --debug run
+
+.PHONY: app/debug
+app/debug:  ## Run a local development server in debug mode
+	uv run debugpy --listen localhost:5678 -m flask --app {{ module_name }}.main:create_app --debug run
+
+.PHONY: app/repl
+app/repl:  ## Run an ipython instance with an httpx client prepared
+	uv run ipython -c 'import httpx; client = httpx.Client(base_url="http://localhost:5000", timeout=300)' -i

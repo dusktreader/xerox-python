@@ -1,12 +1,30 @@
-from textwrap import dedent
+import logging
+
+from flask import Flask
+from flask_http_middleware import MiddlewareManager  # pyright: ignore[reportMissingTypeStubs]
+
+from {{ module_name }}.config import settings
+from {{ module_name }}.constants import DeployEnv
+from {{ module_name }}.exceptions import {{ module_name.split('_')|map('capitalize')|join }}Error
+from {{ module_name }}.logging import init_logging, RouteFilterParams
+from {{ module_name }}.middleware.track_requests import TrackRequestsMiddleware
+from {{ module_name }}.routes import health_api
+from {{ module_name }}.routes import info_api
 
 
-def main():
-    print(
-        dedent(
-            """
-            The only way you can get good, unless you're a genius, is to copy. That's the best thing. Just steal.
-            --Ritchie Blackmore
-            """
-        ).strip()
-    )
+def create_app():
+    app = Flask("{{ project_name }}")
+    app.wsgi_app = MiddlewareManager(app)
+
+    app.config.from_object(settings.model_dump)
+    app.logger.setLevel(getattr(logging, settings.LOG_LEVEL))
+    init_logging(suppress_routes=[RouteFilterParams(route="/health")])
+
+    app.register_blueprint(health_api, url_prefix="/health")
+    app.register_blueprint(info_api, url_prefix="/info")
+
+    app.register_error_handler(*{{ module_name.split('_')|map('capitalize')|join }}Error.build_error_handler())
+    if settings.DEPLOY_ENV not in (DeployEnv.STAGING, DeployEnv.PRODUCTION):
+        app.wsgi_app.add_middleware(TrackRequestsMiddleware)  # pyright: ignore[reportUnknownMemberType]
+
+    return app
