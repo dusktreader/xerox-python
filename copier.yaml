@@ -46,6 +46,7 @@ python_versions:
     - "3.11"
     - "3.12"
     - "3.13"
+    - "3.14"
   multiselect: true
   choices:
     - "3.9"
@@ -53,8 +54,9 @@ python_versions:
     - "3.11"
     - "3.12"
     - "3.13"
+    - "3.14"
   validator: |
-    {% set all_ver = ["3.9", "3.10", "3.11", "3.12", "3.13"] %}
+    {% set all_ver = ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"] %}
     {% if all_ver.index(python_versions[-1]) - all_ver.index(python_versions[0]) + 1 != python_versions|length %}
     python_versions must be a consecutive list of versions
     {% endif %}
