@@ -1,6 +1,6 @@
 {% if include_demo %}"""Main entry point for the {{ project_name }} demo."""
 
-from collections.abc import Callable
+import types
 from enum import StrEnum, auto
 from typing import Annotated
 
@@ -39,7 +39,7 @@ def start(
     else:
         features = [feature]
 
-    feature_map: dict[Feature, list[Callable[..., None]]] = {}
+    feature_map: dict[Feature, list[types.FunctionType]] = {}
     for feature in features:
         feature_map[feature] = get_demo_functions(feature)
 
