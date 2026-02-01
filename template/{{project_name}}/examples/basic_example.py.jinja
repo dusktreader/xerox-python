@@ -1,0 +1,23 @@
+{% if include_examples %}"""Example demonstrating basic usage of {{ project_name }}."""
+
+from {{ module_name }} import __version__
+
+
+def main():
+    """
+    Basic example showing how to use {{ project_name }}.
+    
+    This is a simple example that demonstrates the core functionality.
+    """
+    print(f"{{ project_name }} version: {__version__}")
+    print("Hello from {{ project_name }}!")
+    
+    # Add your example code here
+    # For example:
+    # result = some_function()
+    # print(f"Result: {result}")
+
+
+if __name__ == "__main__":
+    main()
+{% endif %}

@@ -92,8 +92,22 @@ github_account:
   default: dusktreader
   when: "{{ push_to_github }}"
 
+include_demo:
+  type: bool
+  help: Should I include a demo module?
+  default: false
+
+include_examples:
+  type: bool
+  help: Should I include an examples directory?
+  default: false
+
 
 _subdirectory: template
+
+_exclude:
+  - "{% if not include_demo %}{{project_name}}/src/{{module_name}}_demo{% endif %}"
+  - "{% if not include_examples %}{{project_name}}/examples{% endif %}"
 
 # These should probably only trigger on new projects not updates
 _tasks:

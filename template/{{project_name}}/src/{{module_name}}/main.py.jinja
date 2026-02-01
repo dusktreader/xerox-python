@@ -1,5 +1,10 @@
 from textwrap import dedent
 
+from {{ module_name }}.version import get_version
+
+
+__version__ = get_version()
+
 
 def main():
     print(

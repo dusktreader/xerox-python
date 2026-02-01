@@ -1,0 +1,23 @@
+{% if include_examples %}# Examples
+
+This directory contains example scripts demonstrating how to use {{ project_name }}.
+
+## Available Examples
+
+- `basic_example.py` - Basic usage example showing core functionality
+
+## Running Examples
+
+You can run any example directly with Python:
+
+```bash
+uv run python examples/basic_example.py
+```
+
+Or install the package and run it:
+
+```bash
+uv sync
+uv run python examples/basic_example.py
+```
+{% endif %}

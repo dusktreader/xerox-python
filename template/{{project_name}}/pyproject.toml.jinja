@@ -17,10 +17,23 @@ homepage = "https://github.com/{{ github_account }}/{{project_name}}"
 source = "https://github.com/{{ github_account }}/{{project_name}}"
 changelog = "https://github.com/{{ github_account }}/{{project_name}}/blob/main/CHANGELOG.md"
 
+{% if include_demo %}
+[project.optional-dependencies]
+demo = [
+    "rich~=14.0",
+    "snick~=2.0",
+    "typer~=0.15",
+]
+
+[project.scripts]
+{{ module_name }}-demo = "{{ module_name }}_demo.main:main"
+{% endif %}
+
 
 [dependency-groups]
 dev = [
     "basedpyright~=1.28",
+    "debugpy~=1.8",
     "ipython~=8.18",
     "mkdocs-material~=9.6",
     "mkdocstrings[python]~=0.29",
@@ -29,6 +42,7 @@ dev = [
     "pygments~=2.19",
     "pytest~=8.3",
     "pytest-cov~=6.0",
+    "pytest-mock~=3.14",
     "pytest-pretty~=1.2",
     "pytest-random-order~=1.1",
     "ruff~=0.11",
@@ -54,7 +68,7 @@ addopts = [
 
 [tool.ruff]
 line-length = 120
-src = ["src/{{ module_name }}", "tests"]
+src = ["src/{{ module_name }}", "tests"{% if include_demo %}, "src/{{ module_name }}_demo"{% endif %}{% if include_examples %}, "examples"{% endif %}]
 
 
 [tool.ruff.format]
@@ -81,10 +95,6 @@ reportUnusedCallResult = false
 extend-ignore-identifiers-re = []
 
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/{{ module_name }}"]
-
-
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv-build>=0.1.0"]
+build-backend = "uv_build"

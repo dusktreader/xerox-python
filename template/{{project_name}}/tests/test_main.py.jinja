@@ -1,8 +1,24 @@
 from pytest import CaptureFixture
+from pytest_mock import MockerFixture
 
 from {{ module_name }}.main import main
 
 
-def test_raise(capsys: CaptureFixture[str]):
+def test_main_output(capsys: CaptureFixture[str]):
+    """Test that main produces expected output."""
     main()
     assert "Ritchie Blackmore" in capsys.readouterr().out
+
+
+def test_main_with_mock(mocker: MockerFixture, capsys: CaptureFixture[str]):
+    """Test main with mocked print to demonstrate pytest-mock usage."""
+    # Mock the print function to verify it's called
+    mock_print = mocker.patch("builtins.print")
+    
+    main()
+    
+    # Verify print was called with expected content
+    mock_print.assert_called()
+    call_args = str(mock_print.call_args)
+    assert "Ritchie Blackmore" in call_args
+

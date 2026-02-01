@@ -1,0 +1,23 @@
+{% if include_demo %}"""Basic demo functions for {{ project_name }}."""
+
+from {{ module_name }} import __version__
+
+
+def demo_version():
+    """
+    This demo shows how to get the version of `{{ project_name }}`.
+
+    The version is available as a module-level variable.
+    """
+    print(f"{{ project_name }} version: {__version__}")
+
+
+def demo_hello_world():
+    """
+    This demo shows a simple hello world example.
+
+    This is a placeholder demo that you can replace with actual features.
+    """
+    print("Hello from {{ project_name }}!")
+    print("Replace this with your own demo functions.")
+{% endif %}
