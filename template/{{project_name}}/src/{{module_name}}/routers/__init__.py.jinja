@@ -1,0 +1,4 @@
+from {{ module_name }}.routers.info import router as info_router
+from {{ module_name }}.routers.health import router as health_router
+
+__all__ = ["info_router", "health_router"]

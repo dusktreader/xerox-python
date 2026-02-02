@@ -1,0 +1,23 @@
+from collections.abc import Awaitable, Callable
+from typing import override
+
+from fastapi import Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.types import ASGIApp
+from whenever import Instant
+
+from {{ module_name }}.schemas.info import stats
+
+
+class TrackRequestsMiddleware(BaseHTTPMiddleware):
+
+    def __init__(self, app: ASGIApp):
+        super().__init__(app)
+
+    @override
+    async def dispatch(self, request: Request, call_next: Callable[..., Awaitable[Response]]) -> Response:
+        start_time = Instant.now()
+        response: Response = await call_next(request)
+        stop_time = Instant.now()
+        stats.update(request.url.path, stop_time - start_time)
+        return response
