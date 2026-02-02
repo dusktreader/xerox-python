@@ -40,6 +40,8 @@ RUN --mount=type=bind,source=uv.lock,target=uv.lock \
         --no-dev \
         --no-editable
 
+RUN uv pip install gunicorn
+
 
 # ==== Final stage: copy venv and run ==================================================================================
 FROM base AS final
@@ -51,3 +53,10 @@ COPY --from=build --chown={{ project_name }}:{{ project_name }} /py-bin /py-bin
 
 # Smoke test!
 RUN python -Ic 'import {{ module_name }}'
+
+CMD [ \
+  "gunicorn", \
+  "--bind=0.0.0.0:5000", \
+  "--workers=4", \
+  "--worker-class=sync", \
+  "{{ project_name }}.main:create_app()"]
