@@ -1,0 +1,4 @@
+from {{ module_name }}.routes.info import api as info_api
+from {{ module_name }}.routes.health import api as health_api
+
+__all__ = ["info_api", "health_api"]

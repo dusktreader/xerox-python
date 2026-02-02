@@ -49,6 +49,18 @@ demo/debug:  ## Run the demo application in debug mode
 
 {% endif %}
 
+## ==== App Commands ===================================================================================================
+
+app/serve:  ## Run a local development server
+	@uv run flask --app {{ module_name }}.main:create_app --debug run
+
+app/debug:  ## Run a local development server in debug mode
+	@uv run debugpy --listen localhost:5678 -m flask --app {{ module_name }}.main:create_app --debug run
+
+app/repl:  ## Run an ipython instance with an httpx client prepared
+	@uv run ipython -c 'import httpx; client = httpx.Client(base_url="http://localhost:5000", timeout=300)' -i
+
+
 ## ==== Other Commands =================================================================================================
 
 publish: _confirm  ## Publish the package by pushing a tag with the current version
@@ -83,6 +95,7 @@ SHELL:=/bin/bash
 .PHONY: qa qa/test qa/types qa/lint qa/full qa/format \
 	docs docs/build docs/serve \{% if include_demo %}
 	demo demo/run demo/debug \{% endif %}
+	app/serve app/debug app/repl \
 	publish \
 	hooks clean help
 

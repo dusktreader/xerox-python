@@ -1,0 +1,9 @@
+import pytest
+
+from {{ module_name }}.exceptions import {{ module_name.split('_')|map('capitalize')|join }}Error
+
+
+def test_{{ module_name }}_error():
+    with pytest.raises({{ module_name.split('_')|map('capitalize')|join }}Error, match="outer.*inner"):
+        with {{ module_name.split('_')|map('capitalize')|join }}Error.handle_errors("outer"):
+            raise RuntimeError("inner")

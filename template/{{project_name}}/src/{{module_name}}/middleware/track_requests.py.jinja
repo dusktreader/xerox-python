@@ -1,0 +1,20 @@
+from collections.abc import Callable
+
+from flask import Request, Response
+from flask_http_middleware import BaseHTTPMiddleware  # pyright: ignore[reportMissingTypeStubs]
+from whenever import Instant
+
+from {{ module_name }}.schemas.info import stats
+
+
+class TrackRequestsMiddleware(BaseHTTPMiddleware):
+
+    def __init__(self):
+        super().__init__()
+
+    def dispatch(self, request: Request, call_next: Callable[..., Response]) -> Response:  # pyright: ignore[reportImplicitOverride]
+        start_time = Instant.now()
+        response: Response = call_next(request)
+        stop_time = Instant.now()
+        stats.update(request.path, stop_time - start_time)
+        return response

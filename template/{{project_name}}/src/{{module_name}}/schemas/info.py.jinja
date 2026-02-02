@@ -1,0 +1,34 @@
+from typing import Annotated
+from pydantic import BaseModel
+from whenever import TimeDelta
+
+from {{ module_name }}.pydantix import TimeDeltaAnnotation
+
+
+class RouteStats(BaseModel):
+    requests: int = 0
+    request_time: Annotated[TimeDelta, TimeDeltaAnnotation] = TimeDelta()
+
+
+class Stats(BaseModel):
+    total_requests: int = 0
+    total_request_time: Annotated[TimeDelta, TimeDeltaAnnotation] = TimeDelta()
+    route_stats: dict[str, RouteStats] = {}
+
+    def update(self, route: str, span: TimeDelta):
+        self.total_requests += 1
+        self.total_request_time += span
+
+        if route not in self.route_stats:
+            self.route_stats[route] = RouteStats(requests=1, request_time=span)
+        else:
+            self.route_stats[route].requests += 1
+            self.route_stats[route].request_time += span
+
+    def reset(self):
+        self.route_stats = {}
+        self.total_requests = 0
+        self.total_request_time = TimeDelta()
+
+
+stats = Stats()
