@@ -1,0 +1,11 @@
+from http import HTTPStatus
+
+from flask_buzz import FlaskBuzz
+
+
+class {{ module_name.split('_')|map('capitalize')|join }}Error(FlaskBuzz):
+    status_code: int = HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+class NotFoundError({{ module_name.split('_')|map('capitalize')|join }}Error):
+    status_code: int = HTTPStatus.NOT_FOUND

@@ -1,0 +1,90 @@
+import dataclasses
+import inspect
+import logging
+import sys
+import traceback
+from typing import override
+
+from loguru import logger
+from buzz import DoExceptParams
+
+from {{ module_name }}.config import settings
+
+
+class InterceptHandler(logging.Handler):
+
+    @override
+    def emit(self, record: logging.LogRecord) -> None:
+        # Get corresponding Loguru level if it exists.
+        try:
+            level: str | int = logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+
+        # Find caller from where originated the logged message.
+        frame, depth = inspect.currentframe(), 0
+        while frame:
+            filename = frame.f_code.co_filename
+            is_logging = filename == logging.__file__
+            is_frozen = "importlib" in filename and "_bootstrap" in filename
+            if depth > 0 and not (is_logging or is_frozen):
+                break
+            frame = frame.f_back
+            depth += 1
+
+        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
+
+
+@dataclasses.dataclass
+class RouteFilterParams:
+    route: str
+    verb: str = "GET"
+
+
+class RouteFilter(logging.Filter):
+    rfp: RouteFilterParams
+
+    def __init__(self, rfp: RouteFilterParams):
+        super().__init__()
+        self.rfp = rfp
+
+    @override
+    def filter(self, record: logging.LogRecord):
+        return f"{self.rfp.verb} {self.rfp.route}" not in record.getMessage()
+
+
+def init_logging(suppress_routes: list[RouteFilterParams] | None = None):
+    logger.remove()
+    logger.add(sys.stderr, level=settings.LOG_LEVEL)
+
+    if suppress_routes is None:
+        suppress_routes = []
+
+    flask_logger = logging.getLogger("{{ project_name }}")
+    for handler in flask_logger.handlers[:]:
+        flask_logger.removeHandler(handler)
+    flask_logger.addHandler(InterceptHandler())
+
+    werkzeug_logger = logging.getLogger("werkzeug")
+    for handler in werkzeug_logger.handlers[:]:
+        werkzeug_logger.removeHandler(handler)
+    werkzeug_logger.addHandler(InterceptHandler())
+
+    for rfp in suppress_routes:
+        flask_logger.addFilter(RouteFilter(rfp))
+        werkzeug_logger.addFilter(RouteFilter(rfp))
+
+    logger.info(f"Logging configured 📝 Level: {settings.LOG_LEVEL}")
+
+
+def log_error(params: DoExceptParams):
+    logger.error(
+        "\n".join(
+            [
+                params.final_message,
+                "--------",
+                "Traceback:",
+                "".join(traceback.format_tb(params.trace)),
+            ]
+        )
+    )
