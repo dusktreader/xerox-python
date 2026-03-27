@@ -1,0 +1,28 @@
+from fastapi import APIRouter
+from fastapi import status
+
+from {{ module_name }}.config import Settings, settings
+from {{ module_name }}.schemas.info import Stats, stats
+
+router = APIRouter(prefix="/info")
+
+
+@router.get(
+    "/stats",
+    status_code=status.HTTP_200_OK,
+    description="Endpoint used to fetch API stats",
+)
+async def fetch_stats() -> Stats:
+    """
+    Fetch API statistics
+    """
+    return stats
+
+
+@router.get(
+    "/config",
+    status_code=status.HTTP_200_OK,
+    description="Endpoint used to fetch the API config",
+)
+async def fetch_config() -> Settings:
+    return settings
