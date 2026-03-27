@@ -1,0 +1,37 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      UV_PROJECT_ENVIRONMENT: "/venv"
+      UV_LINK_MODE: copy
+    ports:
+      - "5000:5000"
+    volumes:
+      - uv_venv_api:/venv
+      - uv_python_installs:/root/.local/share/uv/python
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: pyproject.toml
+        - action: rebuild
+          path: uv.lock
+
+  prod-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      API_ENV: production
+    ports:
+      - "5010:5000"
+    profiles:
+      - prod-test
+
+volumes:
+  uv_venv_api:
+  uv_python_installs:

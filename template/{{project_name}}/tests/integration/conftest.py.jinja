@@ -1,7 +1,10 @@
 """Fixtures and shared step definitions for BDD integration tests."""
 
 import pytest
-from pytest_bdd import then, parsers
+from fastapi.testclient import TestClient
+from pytest_bdd import given, when, then, parsers
+
+from {{ module_name }}.main import api
 
 
 # ---------------------------------------------------------------------------
@@ -16,8 +19,43 @@ def bdd_context() -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Shared Given steps
+# ---------------------------------------------------------------------------
+
+
+@given("the FastAPI test client is ready")
+def fastapi_client_ready(bdd_context: dict) -> None:
+    bdd_context["client"] = TestClient(api)
+
+
+# ---------------------------------------------------------------------------
+# Shared When steps
+# ---------------------------------------------------------------------------
+
+
+@when(parsers.parse('I GET "{path}"'))
+def get_request(path: str, bdd_context: dict) -> None:
+    client = bdd_context["client"]
+    bdd_context["response"] = client.get(path)
+
+
+# ---------------------------------------------------------------------------
 # Shared Then steps
 # ---------------------------------------------------------------------------
+
+
+@then(parsers.parse("the response status is {code:d}"))
+def response_status(code: int, bdd_context: dict) -> None:
+    response = bdd_context["response"]
+    assert response.status_code == code, (
+        f"Expected status {code}, got {response.status_code}"
+    )
+
+
+@then("the response body is valid JSON")
+def response_is_json(bdd_context: dict) -> None:
+    response = bdd_context["response"]
+    assert response.json() is not None, "Expected a JSON response body"
 
 
 @then(parsers.parse('the output contains "{text}"'))
