@@ -20,9 +20,9 @@ changelog = "https://github.com/{{ github_account }}/{{project_name}}/blob/main/
 {% if include_demo %}
 [project.optional-dependencies]
 demo = [
-    "rich~=14.0",
-    "snick~=2.0",
-    "typer~=0.15",
+    "rich>=14.0",
+    "snick>=3.0",
+    "typer>=0.24.1",
 ]
 
 [project.scripts]
@@ -32,20 +32,20 @@ demo = [
 
 [dependency-groups]
 dev = [
-    "debugpy~=1.8",
-    "ipython~=8.18",
-    "mkdocs-material~=9.6",
-    "mkdocstrings[python]~=0.29",
-    "pyclean~=3.1",
-    "pygments~=2.19",
-    "pytest~=8.3",
-    "pytest-cov~=6.0",
-    "pytest-mock~=3.14",
-    "pytest-pretty~=1.2",
-    "pytest-random-order~=1.1",
-    "ruff~=0.11",
-    "ty~=0.0",
-    "typos~=1.31",
+    "debugpy>=1.8",
+    "ipython>=8.18",
+    "mkdocs-material>=9.6",
+    "mkdocstrings[python]>=0.29",
+    "pyclean>=3.1",
+    "pygments>=2.19",
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "pytest-mock>=3.14",
+    "pytest-pretty>=1.2",
+    "pytest-random-order>=1.1",
+    "ruff>=0.11",
+    "ty>=0.0",
+    "typos>=1.31",
 ]
 
 

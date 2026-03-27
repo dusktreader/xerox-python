@@ -1,7 +1,3 @@
-> [!IMPORTANT]
-> I'm looking for a job right now! If you know of any openings that match my skill-set,
-> please let me know! You can read my resume over at [resume site](https://cv.dusktreader.dev). Thanks!!
-
 # xerox-python
 
 [//]: # (Add an asciicast)
