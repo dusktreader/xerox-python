@@ -1,0 +1,16 @@
+import pytest
+from typer.testing import CliRunner
+from typerdrive import set_typerdrive_config
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _configure_typerdrive():
+    set_typerdrive_config(
+        app_name="{{ project_name }}-test",
+        console_width=80,
+    )
+
+
+@pytest.fixture
+def runner() -> CliRunner:
+    return CliRunner()

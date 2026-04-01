@@ -1,0 +1,40 @@
+import typer
+from typerdrive import (
+    add_cache_subcommand,
+    add_files_subcommand,
+    add_logs_subcommand,
+    add_settings_subcommand,
+    attach_settings,
+    handle_errors,
+    terminal_message,
+)
+
+from {{ module_name }}.config import {{ module_name.split('_')|map('capitalize')|join }}Settings
+from {{ module_name }}.version import get_version
+
+{% set AppName = module_name.split('_')|map('capitalize')|join %}
+
+cli = typer.Typer(
+    name="{{ module_name.replace('_', '-') }}",
+    help="{{ project_summary }}",
+    no_args_is_help=True,
+)
+
+
+@cli.command()
+@handle_errors("hello failed")
+@attach_settings({{ AppName }}Settings)
+def hello(ctx: typer.Context, settings: {{ AppName }}Settings) -> None:
+    """Say hello using the configured username."""
+    terminal_message(
+        f"Hello, [bold cyan]{settings.username}[/bold cyan]!",
+        subject="{{ module_name.replace('_', '-') }}",
+        subject_color="green",
+        footer=f"v{get_version()}",
+    )
+
+
+add_settings_subcommand(cli, {{ AppName }}Settings)
+add_logs_subcommand(cli)
+add_cache_subcommand(cli)
+add_files_subcommand(cli)

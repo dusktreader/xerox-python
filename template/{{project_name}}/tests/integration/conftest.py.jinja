@@ -1,7 +1,10 @@
 """Fixtures and shared step definitions for BDD integration tests."""
 
 import pytest
-from pytest_bdd import then, parsers
+from pytest_bdd import then, when, parsers
+from typer.testing import CliRunner
+
+from {{ module_name }}.cli.main import cli
 
 
 # ---------------------------------------------------------------------------
@@ -16,11 +19,41 @@ def bdd_context() -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Shared When steps
+# ---------------------------------------------------------------------------
+
+
+@when(parsers.parse('I run the CLI with "{args}"'))
+def run_cli(args: str, bdd_context: dict) -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli, args.split())
+    bdd_context["result"] = result
+
+
+# ---------------------------------------------------------------------------
 # Shared Then steps
 # ---------------------------------------------------------------------------
 
 
+@then("the command succeeds")
+def command_succeeds(bdd_context: dict) -> None:
+    result = bdd_context["result"]
+    assert result.exit_code == 0, (
+        f"Expected exit code 0, got {result.exit_code}.\nOutput:\n{result.output}"
+    )
+
+
+@then("the command fails")
+def command_fails(bdd_context: dict) -> None:
+    result = bdd_context["result"]
+    assert result.exit_code != 0, (
+        f"Expected non-zero exit code, got {result.exit_code}.\nOutput:\n{result.output}"
+    )
+
+
 @then(parsers.parse('the output contains "{text}"'))
 def output_contains(text: str, bdd_context: dict) -> None:
-    output = bdd_context.get("output", "")
-    assert text in output, f"Expected {text!r} in output.\nActual output:\n{output}"
+    result = bdd_context["result"]
+    assert text in result.output, (
+        f"Expected {text!r} in output.\nActual output:\n{result.output}"
+    )
