@@ -17,6 +17,7 @@ Design notes:
   repository (local path, not a remote URL).
 """
 
+import subprocess
 from pathlib import Path
 
 import copier
@@ -26,14 +27,11 @@ import pytest
 _TEMPLATE_ROOT = Path(__file__).parent.parent
 
 
-def _generate_project(tmp_path_factory: pytest.TempPathFactory, branch: str) -> Path:
-    """Generate a project from *branch* and run `uv sync` inside it."""
-    import subprocess
-
-    base = tmp_path_factory.mktemp(f"xerox-{branch}", numbered=False)
+def _generate_project(tmp_path: Path, branch: str) -> Path:
+    """Generate a project from *branch* into *tmp_path* and run `uv sync`."""
     copier.run_copy(
         src_path=str(_TEMPLATE_ROOT),
-        dst_path=str(base),
+        dst_path=str(tmp_path),
         data={
             "project_name": "smoke-test",
             "python_versions": ["3.13"],
@@ -48,7 +46,7 @@ def _generate_project(tmp_path_factory: pytest.TempPathFactory, branch: str) -> 
         quiet=True,
         vcs_ref=branch,
     )
-    project_dir = base / "smoke-test"
+    project_dir = tmp_path / "smoke-test"
     result = subprocess.run(
         ["uv", "sync"],
         cwd=project_dir,
@@ -63,22 +61,22 @@ def _generate_project(tmp_path_factory: pytest.TempPathFactory, branch: str) -> 
 @pytest.fixture(scope="session")
 def main_project(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Generated + synced project from the `main` branch."""
-    return _generate_project(tmp_path_factory, "main")
+    return _generate_project(tmp_path_factory.mktemp("xerox-main", numbered=False), "main")
 
 
 @pytest.fixture(scope="session")
 def flask_project(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Generated + synced project from the `flask` branch."""
-    return _generate_project(tmp_path_factory, "flask")
+    return _generate_project(tmp_path_factory.mktemp("xerox-flask", numbered=False), "flask")
 
 
 @pytest.fixture(scope="session")
 def typerdrive_project(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Generated + synced project from the `typerdrive` branch."""
-    return _generate_project(tmp_path_factory, "typerdrive")
+    return _generate_project(tmp_path_factory.mktemp("xerox-typerdrive", numbered=False), "typerdrive")
 
 
 @pytest.fixture(scope="session")
 def fastapi_project(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Generated + synced project from the `fastapi` branch."""
-    return _generate_project(tmp_path_factory, "fastapi")
+    return _generate_project(tmp_path_factory.mktemp("xerox-fastapi", numbered=False), "fastapi")
