@@ -1,0 +1,21 @@
+"""Step definitions for main.feature."""
+
+import io
+import contextlib
+
+import pytest
+from pytest_bdd import scenarios, when
+
+from {{ module_name }}.main import main
+
+scenarios("../main.feature")
+
+pytestmark = pytest.mark.integration
+
+
+@when("the main function is called")
+def call_main(bdd_context: dict) -> None:
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        main()
+    bdd_context["output"] = buf.getvalue()

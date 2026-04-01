@@ -7,8 +7,14 @@ default: help
 
 qa: qa/full  ## Shortcut for qa/full
 
-qa/test:  ## Run the tests
+qa/test:  ## Run all tests (unit + integration)
 	@uv run pytest
+
+qa/test/unit:  ## Run unit tests only
+	@uv run pytest -m unit tests/unit
+
+qa/test/integration:  ## Run integration tests only
+	@uv run pytest -m integration tests/integration
 
 qa/types:  ## Run static type checks
 	@uv run ty check ${PACKAGE_TARGET} tests{% if include_demo %} src/{{ module_name }}_demo{% endif %}
@@ -80,7 +86,7 @@ help:  ## Show help message
 
 .ONESHELL:
 SHELL:=/bin/bash
-.PHONY: qa qa/test qa/types qa/lint qa/full qa/format \
+.PHONY: qa qa/test qa/test/unit qa/test/integration qa/types qa/lint qa/full qa/format \
 	docs docs/build docs/serve \{% if include_demo %}
 	demo demo/run demo/debug \{% endif %}
 	publish \

@@ -39,6 +39,7 @@ dev = [
     "pyclean>=3.1",
     "pygments>=2.19",
     "pytest>=8.3",
+    "pytest-bdd>=7.0",
     "pytest-cov>=6.0",
     "pytest-mock>=3.14",
     "pytest-pretty>=1.2",
@@ -62,6 +63,12 @@ addopts = [
     "--cov-report=xml:.coverage.xml",
     "--junitxml=.junit.xml",
     "--override-ini=junit_family=legacy",
+]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_steps.py"]
+markers = [
+    "integration: Integration tests that exercise the real package with no mocking",
+    "unit: Fast unit tests with all external dependencies mocked",
 ]
 
 

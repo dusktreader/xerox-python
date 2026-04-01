@@ -1,0 +1,26 @@
+"""Fixtures and shared step definitions for BDD integration tests."""
+
+import pytest
+from pytest_bdd import then, parsers
+
+
+# ---------------------------------------------------------------------------
+# BDD shared state
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def bdd_context() -> dict:
+    """Mutable dict shared across all steps in a single scenario."""
+    return {}
+
+
+# ---------------------------------------------------------------------------
+# Shared Then steps
+# ---------------------------------------------------------------------------
+
+
+@then(parsers.parse('the output contains "{text}"'))
+def output_contains(text: str, bdd_context: dict) -> None:
+    output = bdd_context.get("output", "")
+    assert text in output, f"Expected {text!r} in output.\nActual output:\n{output}"
