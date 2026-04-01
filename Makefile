@@ -7,6 +7,15 @@ stamp:  ## Generate a test project from the template
 	@uv run copier copy --trust . ..
 
 
+## ==== Testing ========================================================================================================
+
+qa/test:  ## Run branch smoke tests (slow -- generates and tests full projects)
+	@uv run pytest -m slow -v
+
+qa/test/fast:  ## Run branch smoke tests without the slow marker filter
+	@uv run pytest -v
+
+
 ## ==== Helpers ========================================================================================================
 
 clean:  ## Clean up build artifacts and other junk
@@ -21,7 +30,7 @@ help:  ## Show help message
 
 .ONESHELL:
 SHELL:=/bin/bash
-.PHONY: stamp clean help
+.PHONY: stamp qa/test qa/test/fast clean help
 
 
 # ..... Color table for pretty printing ................................................................................

@@ -16,3 +16,17 @@ dependencies = [
 homepage = "https://github.com/dusktreader/xerox-python"
 source = "https://github.com/dusktreader/xerox-python"
 changelog = "https://github.com/dusktreader/xerox-python/blob/main/CHANGELOG.md"
+
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-pretty>=1.2",
+]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: Tests that generate and exercise a full project (minutes per test)",
+]
