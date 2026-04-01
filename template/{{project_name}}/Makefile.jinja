@@ -41,6 +41,16 @@ docs/build:  ## Build the documentation
 docs/serve:  ## Build the docs and start a local dev server
 	@uv run mkdocs serve --config-file=docs/mkdocs.yaml --dev-addr=localhost:10000
 
+## ==== Application ====================================================================================================
+
+app: app/run  ## Shortcut for app/run
+
+app/run:  ## Run the CLI application
+	@uv run {{ module_name.replace('_', '-') }}
+
+app/debug:  ## Run the CLI application in debug mode
+	@uv run debugpy --listen localhost:5678 --wait-for-client -m {{ module_name }}.cli.main
+
 {% if include_demo %}
 
 ## ==== Demo ===========================================================================================================
@@ -87,7 +97,8 @@ help:  ## Show help message
 .ONESHELL:
 SHELL:=/bin/bash
 .PHONY: qa qa/test qa/test/unit qa/test/integration qa/types qa/lint qa/full qa/format \
-	docs docs/build docs/serve \{% if include_demo %}
+	docs docs/build docs/serve \
+	app app/run app/debug \{% if include_demo %}
 	demo demo/run demo/debug \{% endif %}
 	publish \
 	hooks clean help

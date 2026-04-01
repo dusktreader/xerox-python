@@ -1,0 +1,29 @@
+from {{ module_name }}.cli.main import cli
+from {{ module_name }}.config import {{ module_name.split('_')|map('capitalize')|join }}Settings
+from tests.unit.helpers import check_output, match_output
+
+{% set AppName = module_name.split('_')|map('capitalize')|join %}
+
+
+def _make_settings(**overrides) -> {{ AppName }}Settings:
+    defaults: dict = {
+        "username": "Test User",
+    }
+    defaults.update(overrides)
+    return {{ AppName }}Settings(**defaults)
+
+
+class TestCli:
+    def test_help(self):
+        check_output(cli, "--help", expected_substring="{{ project_summary }}")
+
+    def test_hello_in_help(self):
+        check_output(cli, "--help", expected_substring="hello")
+
+
+class TestHello:
+    def test_hello_outputs_greeting(self):
+        match_output(cli, "hello", expected_pattern=["Hello"])
+
+    def test_hello_help(self):
+        check_output(cli, "hello", "--help", expected_substring="configured username")

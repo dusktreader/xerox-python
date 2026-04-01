@@ -1,17 +1,6 @@
-from textwrap import dedent
-
+from {{ module_name }}.cli.main import cli
 from {{ module_name }}.version import get_version
-
 
 __version__ = get_version()
 
-
-def main():
-    print(
-        dedent(
-            """
-            The only way you can get good, unless you're a genius, is to copy. That's the best thing. Just steal.
-            --Ritchie Blackmore
-            """
-        ).strip()
-    )
+__all__ = ["cli", "__version__"]
