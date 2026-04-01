@@ -1,11 +1,11 @@
 """Branch smoke tests.
 
 Each test generates a full project from the named branch (via the session-
-scoped fixtures in conftest.py), then runs ``uv run pytest`` inside it and
+scoped fixtures in conftest.py), then runs `uv run pytest` inside it and
 asserts the exit code is zero.
 
-These tests are intentionally slow -- ``uv sync`` + ``pytest`` for a full
-generated project takes tens of seconds each.  They are marked ``slow`` so
+These tests are intentionally slow -- `uv sync` + `pytest` for a full
+generated project takes tens of seconds each.  They are marked `slow` so
 they can be skipped during rapid iteration:
 
     uv run pytest -m "not slow"   # skip these
