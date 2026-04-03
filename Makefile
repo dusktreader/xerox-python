@@ -15,7 +15,10 @@ git/rebase:  ## Rebase all framework branches (fastapi, flask, typerdrive) onto 
 	done && git checkout main
 
 git/push:  ## Push main and all framework branches to origin
-	@git push origin main && git push fastapi flask typerdrive --force-with-lease
+	@git push origin main && \
+	for branch in fastapi flask typerdrive; do \
+		git push $$branch --force-with-lease \
+	done
 
 
 ## ==== Testing ========================================================================================================
