@@ -11,6 +11,9 @@ rebase:  ## Rebase all framework branches (fastapi, flask, typerdrive) onto main
 		git checkout $$branch && git rebase main; \
 	done && git checkout main
 
+push:  ## Push main and all framework branches to origin
+	@git push origin main fastapi flask typerdrive --force-with-lease
+
 
 ## ==== Testing ========================================================================================================
 
@@ -35,7 +38,7 @@ help:  ## Show help message
 
 .ONESHELL:
 SHELL:=/bin/bash
-.PHONY: stamp rebase/branches qa/test qa/test/fast clean help
+.PHONY: stamp rebase push qa/test qa/test/fast clean help
 
 
 # ..... Color table for pretty printing ................................................................................
