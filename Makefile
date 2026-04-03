@@ -6,13 +6,16 @@ default: help
 stamp:  ## Generate a test project from the template
 	@uv run copier copy --trust . ..
 
-rebase:  ## Rebase all framework branches (fastapi, flask, typerdrive) onto main
+
+## ==== Git Commands ===================================================================================================
+
+git/rebase:  ## Rebase all framework branches (fastapi, flask, typerdrive) onto main
 	@for branch in fastapi flask typerdrive; do \
 		git checkout $$branch && git rebase main; \
 	done && git checkout main
 
-push:  ## Push main and all framework branches to origin
-	@git push origin main fastapi flask typerdrive --force-with-lease
+git/push:  ## Push main and all framework branches to origin
+	@git push origin main && git push fastapi flask typerdrive --force-with-lease
 
 
 ## ==== Testing ========================================================================================================
