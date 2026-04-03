@@ -6,7 +6,7 @@ default: help
 stamp:  ## Generate a test project from the template
 	@uv run copier copy --trust . ..
 
-rebase/branches:  ## Rebase all framework branches (fastapi, flask, typerdrive) onto main
+rebase:  ## Rebase all framework branches (fastapi, flask, typerdrive) onto main
 	@for branch in fastapi flask typerdrive; do \
 		git checkout $$branch && git rebase main; \
 	done && git checkout main
