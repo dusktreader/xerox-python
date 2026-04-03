@@ -92,6 +92,12 @@ github_account:
   default: dusktreader
   when: "{{ push_to_github }}"
 
+publish_to_pypi:
+  type: bool
+  help: Should I set up trusted publishing to PyPI?
+  default: "{{ push_to_github }}"
+  when: "{{ push_to_github }}"
+
 include_demo:
   type: bool
   help: Should I include a demo module?
@@ -146,6 +152,23 @@ _tasks:
   - working_directory: "{{ project_name }}"
     command: "git push -u origin main"
     when: "{{ push_to_github }}"
+  - working_directory: "{{ project_name }}"
+    command: >
+      gh api
+      --silent
+      --method=PUT
+      -H "Accept: application/vnd.github+json"
+      "/repos/{{ github_account }}/{{ project_name }}/environments/pypi"
+    when: "{{ publish_to_pypi }}"
+  - command: >
+      echo "ACTION REQUIRED: Register a pending trusted publisher at
+      https://pypi.org/manage/account/publishing/ with these settings:
+        PyPI project name: {{ project_name }}
+        Owner:             {{ github_account }}
+        Repository:        {{ project_name }}
+        Workflow:          deploy.yml
+        Environment:       pypi"
+    when: "{{ publish_to_pypi }}"
   - working_directory: "{{ project_name }}"
     command: >
       while [ -z "$(gh run list --json databaseId,name | jq '.[] | select(.name == "build-docs")')" ]; do

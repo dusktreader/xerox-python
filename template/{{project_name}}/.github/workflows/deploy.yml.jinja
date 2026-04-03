@@ -10,6 +10,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
 
     steps:
     - name: Checkout repository
@@ -25,4 +28,4 @@ jobs:
       run: uv build
 
     - name: Publish package
-      run: uv publish --token={{ "${{ secrets.PYPI_API_KEY }}" }}
+      run: uv publish

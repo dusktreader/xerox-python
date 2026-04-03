@@ -6,6 +6,26 @@ default: help
 stamp:  ## Generate a test project from the template
 	@uv run copier copy --trust . ..
 
+rebase/branches:  ## Rebase all framework branches (fastapi, flask, typerdrive) onto main as single commits
+	@set -e
+	@for branch in fastapi flask typerdrive; do
+		echo -e "$(BLUE)Rebasing $$branch onto main...$(CLEAR)"
+		prev_commit=$$(git rev-parse $$branch)
+		git checkout $$branch
+		git rebase main
+		git reset --soft main
+		commit_msg=$$(git log --format=%s -1 $$prev_commit)
+		git commit -m "$$commit_msg"
+		count=$$(git log --oneline main..$$branch | wc -l | tr -d ' ')
+		if [[ "$$count" != "1" ]]; then
+			echo -e "$(RED)ERROR: $$branch has $$count commits on top of main (expected 1)$(CLEAR)"
+			exit 1
+		fi
+		echo -e "$(GREEN)$$branch rebased successfully (1 commit)$(CLEAR)"
+	done
+	git checkout main
+	echo -e "$(GREEN)All branches rebased.$(CLEAR)"
+
 
 ## ==== Testing ========================================================================================================
 
@@ -30,7 +50,7 @@ help:  ## Show help message
 
 .ONESHELL:
 SHELL:=/bin/bash
-.PHONY: stamp qa/test qa/test/fast clean help
+.PHONY: stamp rebase/branches qa/test qa/test/fast clean help
 
 
 # ..... Color table for pretty printing ................................................................................
