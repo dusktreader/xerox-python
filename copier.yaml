@@ -118,9 +118,6 @@ _exclude:
 # These should probably only trigger on new projects not updates
 _tasks:
   - working_directory: "{{ project_name }}"
-    command: "gh auth status 2>&1 | grep {{ github_account }}"
-    when: "{{ push_to_github }}"
-  - working_directory: "{{ project_name }}"
     command: "uv sync"
   - working_directory: "{{ project_name }}"
     command: "make qa/full"
@@ -142,6 +139,7 @@ _tasks:
     when: "{{ initialize_git }}"
   - working_directory: "{{ project_name }}"
     command: >
+      GH_TOKEN=$(gh auth token --user {{ github_account }})
       gh repo create
       --description="{{ project_summary }}"
       --source=.
@@ -154,6 +152,7 @@ _tasks:
     when: "{{ push_to_github }}"
   - working_directory: "{{ project_name }}"
     command: >
+      GH_TOKEN=$(gh auth token --user {{ github_account }})
       gh api
       --silent
       --method=PUT
@@ -171,12 +170,13 @@ _tasks:
     when: "{{ publish_to_pypi }}"
   - working_directory: "{{ project_name }}"
     command: >
-      while [ -z "$(gh run list --json databaseId,name | jq '.[] | select(.name == "build-docs")')" ]; do
+      while [ -z "$(GH_TOKEN=$(gh auth token --user {{ github_account }}) gh run list --json databaseId,name | jq '.[] | select(.name == "build-docs")')" ]; do
         echo "Waiting for docs build action to start" && sleep 1;
       done
     when: "{{ push_to_github }}"
   - working_directory: "{{ project_name }}"
     command: >
+      GH_TOKEN=$(gh auth token --user {{ github_account }})
       gh run list --json databaseId,name
       | jq '.[] | select(.name == "build-docs")'
       | jq '.databaseId'
@@ -184,6 +184,7 @@ _tasks:
     when: "{{ push_to_github }}"
   - working_directory: "{{ project_name }}"
     command: >
+      GH_TOKEN=$(gh auth token --user {{ github_account }})
       gh api
       --silent
       --method=POST
@@ -195,12 +196,13 @@ _tasks:
     when: "{{ push_to_github }}"
   - working_directory: "{{ project_name }}"
     command: >
-      while [ -z "$(gh run list --json databaseId,name | jq '.[] | select(.name == "pages build and deployment")')" ]; do
+      while [ -z "$(GH_TOKEN=$(gh auth token --user {{ github_account }}) gh run list --json databaseId,name | jq '.[] | select(.name == "pages build and deployment")')" ]; do
         echo "Waiting for page deploy action to start" && sleep 1;
       done
     when: "{{ push_to_github }}"
   - working_directory: "{{ project_name }}"
     command: >
+      GH_TOKEN=$(gh auth token --user {{ github_account }})
       gh run list --json databaseId,name
       | jq '.[] | select(.name == "pages build and deployment")'
       | jq '.databaseId'
