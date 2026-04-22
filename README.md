@@ -16,6 +16,7 @@ There branches available that each build a different project type:
 - `main`: [Default] Builds a basic python project
 - `fastapi`: Builds a basic FastAPI python project
 - `flask`: Builds a basic Flask python project
+- `typer`: Builds a basic [Typer](https://typer.tiangolo.com/) CLI project
 - `typerdrive`: Builds a basic [typerdrive](https://github.com/dusktreader/typerdrive) CLI project
 
 
@@ -59,6 +60,13 @@ uvx copier copy --trust gh:dusktreader/xerox-python --vcs-ref=fastapi .
 
 ```bash
 uvx copier copy --trust gh:dusktreader/xerox-python --vcs-ref=flask .
+```
+
+
+### `typer` branch:
+
+```bash
+uvx copier copy --trust gh:dusktreader/xerox-python --vcs-ref=typer .
 ```
 
 
