@@ -9,8 +9,18 @@ readme = "README.md"
 license-files = ["LICENSE.md"]
 
 requires-python = ">={{ python_versions[0] }}, ~={{ python_versions[-1] }}"
-dependencies = []
 
+dependencies = [
+    "loguru>=0.7",
+    "py-buzz>=8.0",
+    "snick>=3.0",
+    "typer>=0.24.1",
+]
+
+[project.scripts]
+{{ module_name.replace('_', '-') }} = "{{ module_name }}.cli.main:cli"
+{% if include_demo %}{{ module_name }}-demo = "{{ module_name }}_demo.main:main"
+{% endif %}
 
 [project.urls]
 homepage = "https://github.com/{{ github_account }}/{{project_name}}"
@@ -24,9 +34,6 @@ demo = [
     "snick>=3.0",
     "typer>=0.24.1",
 ]
-
-[project.scripts]
-{{ module_name }}-demo = "{{ module_name }}_demo.main:main"
 {% endif %}
 
 
@@ -70,6 +77,9 @@ markers = [
     "integration: Integration tests that exercise the real package with no mocking",
     "unit: Fast unit tests with all external dependencies mocked",
 ]
+
+[tool.coverage.run]
+omit = ["src/{{ module_name }}/main.py"]
 
 
 [tool.ruff]

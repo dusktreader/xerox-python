@@ -1,0 +1,44 @@
+import pytest
+import typer
+
+from {{ module_name }}.exceptions import {{ module_name.split('_')|map('capitalize')|join }}Error, handle_errors
+
+{% set AppName = module_name.split('_')|map('capitalize')|join %}
+
+
+def test_error_raise_and_catch():
+    with pytest.raises({{ AppName }}Error):
+        raise {{ AppName }}Error("something went wrong")
+
+
+def test_error_message():
+    err = {{ AppName }}Error("test message")
+    assert "test message" in str(err)
+
+
+def test_handle_errors_passes_through_success():
+    @handle_errors("boom")
+    def succeed(x: int) -> int:
+        return x + 1
+
+    assert succeed(1) == 2
+
+
+def test_handle_errors_catches_app_error():
+    @handle_errors("boom")
+    def fail():
+        raise {{ AppName }}Error("kaboom")
+
+    with pytest.raises(typer.Exit) as exc_info:
+        fail()
+    assert exc_info.value.exit_code == 1
+
+
+def test_handle_errors_catches_unexpected_error():
+    @handle_errors("boom")
+    def fail():
+        raise RuntimeError("unexpected")
+
+    with pytest.raises(typer.Exit) as exc_info:
+        fail()
+    assert exc_info.value.exit_code == 1

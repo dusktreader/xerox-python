@@ -1,0 +1,40 @@
+import functools
+from typing import Any, Callable, TypeVar
+
+import typer
+from buzz import Buzz
+
+
+{% set AppName = module_name.split('_')|map('capitalize')|join -%}
+class {{ AppName }}Error(Buzz):
+    """Base exception for all {{ project_name }} errors."""
+
+    __test__ = False  # Prevent pytest from collecting this as a test class
+
+
+F = TypeVar("F", bound=Callable[..., Any])
+
+
+def handle_errors(message: str) -> Callable[[F], F]:
+    """Decorate a CLI command to catch errors and exit with a friendly message."""
+
+    def decorator(func: F) -> F:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return func(*args, **kwargs)
+            except {{ AppName }}Error as err:
+                typer.secho(f"{message}: {err}", fg=typer.colors.RED, bold=True, err=True)
+                raise typer.Exit(code=1) from err
+            except Exception as err:
+                typer.secho(
+                    f"{message}: unexpected error: {err}",
+                    fg=typer.colors.RED,
+                    bold=True,
+                    err=True,
+                )
+                raise typer.Exit(code=1) from err
+
+        return wrapper  # ty: ignore[invalid-return-type]
+
+    return decorator
