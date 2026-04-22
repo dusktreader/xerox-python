@@ -9,14 +9,14 @@ stamp:  ## Generate a test project from the template
 
 ## ==== Git Commands ===================================================================================================
 
-git/rebase:  ## Rebase all framework branches (fastapi, flask, typerdrive) onto main
-	@for branch in fastapi flask typerdrive; do \
+git/rebase:  ## Rebase all framework branches (fastapi, flask, typer, typerdrive) onto main
+	@for branch in fastapi flask typer typerdrive; do \
 		git checkout $$branch && git rebase main; \
 	done && git checkout main
 
 git/push:  ## Push main and all framework branches to origin
 	@git push origin main && \
-	for branch in fastapi flask typerdrive; do \
+	for branch in fastapi flask typer typerdrive; do \
 		git push origin $$branch --force-with-lease; \
 	done
 

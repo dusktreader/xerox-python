@@ -71,6 +71,12 @@ def flask_project(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 
 @pytest.fixture(scope="session")
+def typer_project(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Generated + synced project from the `typer` branch."""
+    return _generate_project(tmp_path_factory.mktemp("xerox-typer", numbered=False), "typer")
+
+
+@pytest.fixture(scope="session")
 def typerdrive_project(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Generated + synced project from the `typerdrive` branch."""
     return _generate_project(tmp_path_factory.mktemp("xerox-typerdrive", numbered=False), "typerdrive")

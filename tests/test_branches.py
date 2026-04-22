@@ -46,6 +46,15 @@ def test_flask_branch_passes(flask_project: Path):
 
 
 @pytest.mark.slow
+def test_typer_branch_passes(typer_project: Path):
+    """The typer branch generates a project whose tests pass."""
+    result = _run_pytest(typer_project)
+    assert result.returncode == 0, (
+        f"pytest failed in generated typer project.\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+    )
+
+
+@pytest.mark.slow
 def test_typerdrive_branch_passes(typerdrive_project: Path):
     """The typerdrive branch generates a project whose tests pass."""
     result = _run_pytest(typerdrive_project)
