@@ -1,6 +1,5 @@
 from pytest import CaptureFixture
 from pytest_mock import MockerFixture
-
 from {{ module_name }}.main import main
 
 
@@ -21,4 +20,3 @@ def test_main_with_mock(mocker: MockerFixture, capsys: CaptureFixture[str]):
     mock_print.assert_called()
     call_args = str(mock_print.call_args)
     assert "Ritchie Blackmore" in call_args
-

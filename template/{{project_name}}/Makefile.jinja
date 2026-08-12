@@ -17,7 +17,7 @@ qa/test/integration:  ## Run integration tests only
 	@uv run pytest -m integration tests/integration
 
 qa/types:  ## Run static type checks
-	@uv run ty check ${PACKAGE_TARGET} tests{% if include_demo %} src/{{ module_name }}_demo{% endif %}
+	@uv run{% if include_demo %} --extra demo{% endif %} ty check ${PACKAGE_TARGET} tests{% if include_demo %} src/{{ module_name }}_demo{% endif %}
 
 qa/lint:  ## Run linters
 	@uv run ruff check ${PACKAGE_TARGET} tests{% if include_demo %} src/{{ module_name }}_demo{% endif %}{% if include_examples %} examples{% endif %}

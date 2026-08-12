@@ -1,11 +1,10 @@
 """Step definitions for main.feature."""
 
-import io
 import contextlib
+import io
 
 import pytest
 from pytest_bdd import scenarios, when
-
 from {{ module_name }}.main import main
 
 scenarios("../main.feature")

@@ -1,5 +1,7 @@
 {% if include_demo %}"""Helper functions for running demos."""
 
+from __future__ import annotations
+
 import inspect
 import io
 import re
@@ -152,7 +154,7 @@ def capture(demo: types.FunctionType) -> Captured:
             demo()
         except SystemExit as exited:
             cap.exit_code = exited.code
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - capture demo failures for display
             cap.error = exc
         finally:
             if fake_settings_path.exists():
@@ -196,13 +198,7 @@ def run_demo(demo: types.FunctionType, console: Console, override_label: str | N
         BlankLine,
         Panel(
             Markdown(
-                "\n".join(
-                    [
-                        "```python",
-                        decomposed.source,
-                        "```",
-                    ]
-                )
+                f"```python\n{decomposed.source}\n```"
             ),
             title=f"Here is the source code for [yellow]{decomposed.name}()[/yellow]",
             title_align="left",
@@ -254,7 +250,7 @@ def run_demo(demo: types.FunctionType, console: Console, override_label: str | N
                 BlankLine,
                 BlankLine,
                 Panel(
-                    f"[red]{cap.error.__class__.__name__}[/red]: [yellow]{str(cap.error)}[/yellow]",
+                    f"[red]{cap.error.__class__.__name__}[/red]: [yellow]{cap.error!s}[/yellow]",
                     title=f"Here is the uncaught exception from [yellow]{decomposed.name}()[/yellow]",
                     title_align="left",
                     padding=1,

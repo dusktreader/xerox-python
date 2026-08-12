@@ -59,7 +59,7 @@ Addresses Issue #56
 The parfolection happening in the gizmo component was causing a vulterability in the anti-parfolection checks during the
 enmurculation process.
 
-This was addressed by caching the restults of parfolection prior to enmurculation.
+This was addressed by caching the results of parfolection prior to enmurculation.
 
 Also:
 * Added and updated unit tests
