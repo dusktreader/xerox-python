@@ -5,9 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## Unreleased
+
+### Fixed
+
+- Fixed generated-template Ruff, Ty, and Typos quality-check failures.
+- Fixed spelling errors in the contributing guide and generated contributing guide.
+
+
+### Added
+
+- Added `TODO.py` with a plan for expanding generated-template test coverage.
+
+
 ## v0.4.0 - 2025-02-01
 
 ### Changed
+
 - **Replaced basedpyright and mypy with ty for type checking**
   - Removed basedpyright~=1.28 and mypy~=1.15 from dev dependencies
   - Added ty~=0.0 as the single unified type checker
@@ -21,8 +36,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Added `hooks` target for pre-commit installation
   - Fixed publish target syntax and improved command formatting
 
+
 ### Added
 - Complete typerdrive-style demo module framework
+
   - Added `helpers.py` with demo discovery, decomposition, and output capture
   - Added interactive demo CLI with Feature enum and rich panels
   - Added example demo functions (`demo_version`, `demo_hello_world`)
@@ -31,12 +48,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Updated demo functions to use `types.FunctionType` for better type safety
 - Make targets for demo: `demo`, `demo/run`, `demo/debug`
 
+
 ## v0.3.0 - 2025-04-12
+
 - Added a code of conduct
 - Added a contributing guide
 - Added a branch for flask
 
+
 ## v0.2.0 - 2025-04-10
+
 - Added a Dockerfile and Dockerfile.dev
 - Added typos to quality checks
 - Added some defaults
@@ -44,5 +65,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added homepage to github
 - Added branch for fastapi
 
+
 ## v0.1.0 - 2025-04-04
+
 - Created template project
