@@ -9,8 +9,20 @@ readme = "README.md"
 license-files = ["LICENSE.md"]
 
 requires-python = ">={{ python_versions[0] }}, ~={{ python_versions[-1] }}"
-dependencies = []
 
+dependencies = [
+    "enumatic>=5.0",
+    "loguru>=0.7",
+    "py-buzz>=9.0",
+    "pydantic>=2.14",
+    "typerdrive>=0.15.1",
+]
+
+[project.scripts]
+{{ project_name }} = "{{ module_name }}.cli.main:cli"
+{% if include_demo %}
+{{ project_name }}-demo = "{{ module_name }}_demo.main:main"
+{% endif %}
 
 [project.urls]
 homepage = "https://github.com/{{ github_account }}/{{project_name}}"
@@ -40,9 +52,10 @@ dev = [
     "pytest-pretty>=1.3",
     "pytest-random-order>=1.2",
     "ruff>=0.17.4",
+    "snick>=3.0",
     "ty>=0.0.100",
     "typos>=1.52",
-    "zensical>=0.1.1 "
+    "zensical>=0.1.1"
 ]
 
 
@@ -67,6 +80,9 @@ markers = [
     "unit: Fast unit tests with all external dependencies mocked",
 ]
 
+[tool.coverage.run]
+omit = ["src/{{ module_name }}/main.py"]
+
 
 [tool.ruff]
 line-length = 120
@@ -78,7 +94,9 @@ docstring-code-format = true
 
 
 [tool.typos.default]
-extend-ignore-identifiers-re = []
+extend-ignore-identifiers-re = [
+    "ane_auto",
+]
 
 
 [build-system]

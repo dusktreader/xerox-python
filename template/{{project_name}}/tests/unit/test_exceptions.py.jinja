@@ -1,0 +1,15 @@
+import pytest
+
+from {{ module_name }}.exceptions import {{ module_name.split('_')|map('capitalize')|join }}Error
+
+{% set AppName = module_name.split('_')|map('capitalize')|join %}
+
+
+def test_error_is_raise_and_catch():
+    with pytest.raises({{ AppName }}Error):
+        raise {{ AppName }}Error("something went wrong")
+
+
+def test_error_message():
+    err = {{ AppName }}Error("test message")
+    assert "test message" in str(err)

@@ -1,0 +1,14 @@
+from pydantic import BaseModel, Field
+from typerdrive import SettingsManager, set_typerdrive_config
+from typing import cast
+
+set_typerdrive_config(app_name="{{ project_name }}")
+
+
+class {{ module_name.split('_')|map('capitalize')|join }}Settings(BaseModel):
+    username: str = Field(default="{{ author_name }}", description="Your display name")
+
+
+def load_settings() -> {{ module_name.split('_')|map('capitalize')|join }}Settings:
+    mgr = SettingsManager({{ module_name.split('_')|map('capitalize')|join }}Settings)
+    return cast({{ module_name.split('_')|map('capitalize')|join }}Settings, mgr.settings_instance)
