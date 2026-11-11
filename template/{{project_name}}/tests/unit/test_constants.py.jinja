@@ -1,0 +1,14 @@
+from {{ module_name }}.constants import Sentinel
+
+
+def test_sentinel_missing():
+    assert Sentinel.MISSING.value == "MISSING"
+
+
+def test_sentinel_not_given():
+    assert Sentinel.NOT_GIVEN.value == "NOT_GIVEN"
+
+
+def test_sentinel_values_are_strings():
+    for member in Sentinel:
+        assert isinstance(member.value, str)

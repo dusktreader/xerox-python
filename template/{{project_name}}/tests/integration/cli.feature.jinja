@@ -1,0 +1,16 @@
+Feature: hello command
+
+  Scenario: hello outputs a greeting
+    When I run the CLI with "hello"
+    Then the command succeeds
+    And the output contains "Hello"
+
+  Scenario: hello accepts a custom name
+    When I run the CLI with "hello --name World"
+    Then the command succeeds
+    And the output contains "Hello, World"
+
+  Scenario: CLI help shows project summary
+    When I run the CLI with "--help"
+    Then the command succeeds
+    And the output contains "{{ project_summary }}"

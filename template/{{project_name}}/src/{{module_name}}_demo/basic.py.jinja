@@ -3,25 +3,20 @@ Basic demo functions for {{ project_name }}.
 """
 
 from roadshow import demo
-from {{ module_name }} import __version__
+from {{ module_name }}.main import cli
 
 
-@demo("get version")
-def demo_version():
+@demo("print help")
+def demo_help():
     """
-    This demo shows how to get the version of `{{ project_name }}`.
-
-    The version is available as a module-level variable.
+    This demo shows how calling the `{{ project_name }}` executable with no commands prints help output.
     """
-    print(f"{{ project_name }} version: {__version__}")
+    cli()
 
 
-@demo("hello world")
-def demo_hello_world():
+@demo("hello command")
+def demo_hello_command():
     """
-    This demo shows a simple hello world example.
-
-    This is a placeholder demo that you can replace with actual features.
+    This demo shows how calling the `{{ project_name }} executable with the command `hello` prints a message.
     """
-    print("Hello from {{ project_name }}!")
-    print("Replace this with your own demo functions.")
+    cli(["hello"])

@@ -9,8 +9,20 @@ readme = "README.md"
 license-files = ["LICENSE.md"]
 
 requires-python = ">={{ python_versions[0] }}, ~={{ python_versions[-1] }}"
-dependencies = []
 
+dependencies = [
+    "enumatic>=5.0",
+    "loguru>=0.7",
+    "py-buzz>=9.0",
+    "snick>=3.2",
+    "typer>=0.29.1",
+]
+
+[project.scripts]
+{{ project_name }} = "{{ module_name }}.cli.main:cli"
+{% if include_demo %}
+{{ project_name }}-demo = "{{ module_name }}_demo.main:main"
+{% endif %}
 
 [project.urls]
 homepage = "https://github.com/{{ github_account }}/{{project_name}}"
@@ -20,11 +32,6 @@ changelog = "https://github.com/{{ github_account }}/{{project_name}}/blob/main/
 {% if include_demo %}
 [project.optional-dependencies]
 demo = [ "roadshow>=0.1.2" ]
-{% endif %}
-
-{% if include_demo %}
-[project.scripts]
-{{ project_name }}-demo = "{{ module_name }}_demo.main:main"
 {% endif %}
 
 [dependency-groups]
@@ -66,6 +73,9 @@ markers = [
     "integration: Integration tests that exercise the real package with no mocking",
     "unit: Fast unit tests with all external dependencies mocked",
 ]
+
+[tool.coverage.run]
+omit = ["src/{{ module_name }}/main.py"]
 
 
 [tool.ruff]
