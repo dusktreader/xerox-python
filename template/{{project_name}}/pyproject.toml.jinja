@@ -20,11 +20,12 @@ changelog = "https://github.com/{{ github_account }}/{{project_name}}/blob/main/
 {% if include_demo %}
 [project.optional-dependencies]
 demo = [ "roadshow>=0.1.2" ]
+{% endif %}
 
+{% if include_demo %}
 [project.scripts]
 {{ project_name }}-demo = "{{ module_name }}_demo.main:main"
 {% endif %}
-
 
 [dependency-groups]
 dev = [
