@@ -1,0 +1,24 @@
+from collections.abc import Awaitable, Callable
+from time import perf_counter_ns
+from typing import override
+
+import pendulum
+from fastapi import Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.types import ASGIApp
+
+from {{ module_name }}.schemas.info import stats
+
+
+class TrackRequestsMiddleware(BaseHTTPMiddleware):
+
+    def __init__(self, app: ASGIApp):
+        super().__init__(app)
+
+    @override
+    async def dispatch(self, request: Request, call_next: Callable[..., Awaitable[Response]]) -> Response:
+        start_time = perf_counter_ns()
+        response: Response = await call_next(request)
+        elapsed_microseconds = (perf_counter_ns() - start_time) // 1_000
+        stats.update(request.url.path, pendulum.duration(microseconds=elapsed_microseconds))
+        return response

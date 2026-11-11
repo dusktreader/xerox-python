@@ -104,7 +104,7 @@ include_dockerfiles:
 include_demo:
   type: bool
   help: Should I include a demo module?
-  default: true
+  default: false
 
 include_examples:
   type: bool

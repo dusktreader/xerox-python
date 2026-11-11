@@ -10,3 +10,5 @@ COPY ./src /app/src
 COPY ./pyproject.toml /app/pyproject.toml
 COPY ./uv.lock /app/uv.lock
 COPY Makefile .
+
+CMD ["make", "app/serve"]

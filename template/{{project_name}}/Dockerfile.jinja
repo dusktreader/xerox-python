@@ -40,14 +40,24 @@ RUN --mount=type=bind,source=uv.lock,target=uv.lock \
         --no-dev \
         --no-editable
 
+RUN uv pip install gunicorn
+
 
 # ==== Final stage: copy venv and run ==================================================================================
 FROM base AS final
 
 ENV PATH="/venv/bin:/py-bin:$PATH"
+ENV DEPLOY_ENV=PRODUCTION
 
 COPY --from=build --chown={{ project_name }}:{{ project_name }} /venv /venv
 COPY --from=build --chown={{ project_name }}:{{ project_name }} /py-bin /py-bin
 
 # Smoke test!
 RUN python -Ic 'import {{ module_name }}'
+
+CMD [ \
+  "gunicorn", \
+  "--bind=0.0.0.0:5000", \
+  "--workers=4", \
+  "--worker-class=uvicorn.workers.UvicornWorker", \
+  "{{ module_name }}.main:api"]

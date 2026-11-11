@@ -1,0 +1,35 @@
+from typing import Annotated
+
+import pendulum
+from pydantic import BaseModel
+
+from {{ module_name }}.pydantix import DurationAnnotation
+
+
+class RouteStats(BaseModel):
+    requests: int = 0
+    request_time: Annotated[pendulum.Duration, DurationAnnotation] = pendulum.duration()
+
+
+class Stats(BaseModel):
+    total_requests: int = 0
+    total_request_time: Annotated[pendulum.Duration, DurationAnnotation] = pendulum.duration()
+    route_stats: dict[str, RouteStats] = {}
+
+    def update(self, route: str, span: pendulum.Duration):
+        self.total_requests += 1
+        self.total_request_time += span
+
+        if route not in self.route_stats:
+            self.route_stats[route] = RouteStats(requests=1, request_time=span)
+        else:
+            self.route_stats[route].requests += 1
+            self.route_stats[route].request_time += span
+
+    def reset(self):
+        self.route_stats = {}
+        self.total_requests = 0
+        self.total_request_time = pendulum.duration()
+
+
+stats = Stats()
