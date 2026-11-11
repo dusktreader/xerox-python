@@ -1,0 +1,11 @@
+from pydantic_settings import BaseSettings
+
+from {{ module_name }}.constants import DeployEnv, LogLevel
+
+
+class Settings(BaseSettings, env_file=".env", extra="ignore"):
+    DEPLOY_ENV: DeployEnv = DeployEnv.LOCAL
+    LOG_LEVEL: LogLevel = LogLevel.DEBUG
+
+
+settings = Settings()

@@ -1,0 +1,26 @@
+from flask import Flask
+from flask.testing import FlaskClient
+from logot import Logot, logged
+from logot.loguru import LoguruCapturer
+from loguru import logger
+
+
+def test_app_logger_intercepted(app: Flask, ):
+    with Logot(capturer=LoguruCapturer).capturing() as logot:
+        app.logger.debug("First Message")
+        logger.debug("Second Message")
+
+        logot.assert_logged(logged.debug("First Message"))
+        logot.assert_logged(logged.debug("Second Message"))
+
+        logot.assert_not_logged(logged.debug("First Message", name="{{ project_name }}"))
+        logot.assert_not_logged(logged.debug("First Message", name="werkzeug"))
+
+
+def test_no_logging_for_health_endpoint(client: FlaskClient):
+    with Logot(capturer=LoguruCapturer).capturing() as logot:
+        client.get("/health")
+
+        logot.assert_not_logged(logged.debug("health"))
+        logot.assert_not_logged(logged.debug("health", name="{{ project_name }}"))
+        logot.assert_not_logged(logged.debug("health", name="werkzeug"))

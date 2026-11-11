@@ -1,0 +1,59 @@
+import pendulum
+from {{ module_name }}.schemas.info import RouteStats, Stats
+
+
+def test_update():
+    stats = Stats()
+
+    assert stats.total_requests == 0
+    assert stats.total_request_time == pendulum.duration()
+    assert stats.route_stats == {}
+
+    stats.update("/test1", pendulum.duration(seconds=1))
+
+    assert stats.total_requests == 1
+    assert stats.total_request_time == pendulum.duration(seconds=1)
+    assert stats.route_stats == {
+        "/test1": RouteStats(
+            requests=1,
+            request_time=pendulum.duration(seconds=1),
+        ),
+    }
+
+    stats.update("/test2", pendulum.duration(minutes=2))
+
+    assert stats.total_requests == 2
+    assert stats.total_request_time == pendulum.duration(minutes=2, seconds=1)
+    assert stats.route_stats == {
+        "/test1": RouteStats(
+            requests=1,
+            request_time=pendulum.duration(seconds=1),
+        ),
+        "/test2": RouteStats(
+            requests=1,
+            request_time=pendulum.duration(minutes=2),
+        ),
+    }
+
+
+def test_reset():
+    stats = Stats(
+        total_requests=2,
+        total_request_time=pendulum.duration(minutes=2, seconds=1),
+        route_stats={
+            "/test1": RouteStats(
+                requests=1,
+                request_time=pendulum.duration(seconds=1),
+            ),
+            "/test2": RouteStats(
+                requests=1,
+                request_time=pendulum.duration(minutes=2),
+            ),
+        },
+    )
+
+    stats.reset()
+
+    assert stats.total_requests == 0
+    assert stats.total_request_time == pendulum.duration()
+    assert stats.route_stats == {}
