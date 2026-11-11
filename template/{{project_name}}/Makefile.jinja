@@ -46,10 +46,10 @@ docs/serve:  ## Build the docs and start a local dev server
 demo: demo/run  ## Shortcut for demo/run
 
 demo/run:  ## Run the demo application
-	@uv run {{ module_name }}-demo
+	@uv run {{ project_name }}-demo
 
 demo/debug:  ## Run the demo application in debug mode
-	@uv run debugpy --listen localhost:5678 --wait-for-client {{ module_name }}-demo
+	@uv run debugpy --listen localhost:5678 --wait-for-client {{ project_name }}-demo
 
 {% endif %}
 
