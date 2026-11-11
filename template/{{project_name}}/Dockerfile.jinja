@@ -23,7 +23,7 @@ ENV UV_LINK_MODE=copy \
     UV_PROJECT_ENVIRONMENT=/venv \
     UV_PYTHON_INSTALL_DIR=/py-bin
 
-COPY --from=ghcr.io/astral-sh/uv:0.6.6 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.13.7 /uv /uvx /bin/
 RUN uv python install {{ default_python_version }} && \
     ln -s $(uv python find {{ default_python_version }}) /py-bin/python
 

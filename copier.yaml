@@ -41,22 +41,20 @@ python_versions:
   type: str
   help: What Python versions will be supported?
   default:
-    - "3.9"
-    - "3.10"
     - "3.11"
     - "3.12"
     - "3.13"
     - "3.14"
+    - "3.15"
   multiselect: true
   choices:
-    - "3.9"
-    - "3.10"
     - "3.11"
     - "3.12"
     - "3.13"
     - "3.14"
+    - "3.15"
   validator: |
-    {% set all_ver = ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"] %}
+    {% set all_ver = ["3.11", "3.12", "3.13", "3.14", "3.15"] %}
     {% if all_ver.index(python_versions[-1]) - all_ver.index(python_versions[0]) + 1 != python_versions|length %}
     python_versions must be a consecutive list of versions
     {% endif %}
@@ -73,7 +71,7 @@ default_python_version:
 run_qa_checks:
   type: bool
   help: Should I run quality checks after building?
-  default: false
+  default: true
 
 initialize_git:
   type: bool
@@ -83,7 +81,7 @@ initialize_git:
 push_to_github:
   type: bool
   help: Should I publish this project to github?
-  default: "{{ initialize_git }}"
+  default: false
   when: "{{ initialize_git }}"
 
 github_account:
@@ -95,23 +93,30 @@ github_account:
 publish_to_pypi:
   type: bool
   help: Should I set up trusted publishing to PyPI?
-  default: "{{ push_to_github }}"
+  default: false
   when: "{{ push_to_github }}"
+
+include_dockerfiles:
+  type: bool
+  help: Should I include Dockerfile and Dockerfile.dev?
+  default: true
 
 include_demo:
   type: bool
   help: Should I include a demo module?
-  default: false
+  default: true
 
 include_examples:
   type: bool
   help: Should I include an examples directory?
-  default: false
+  default: true
 
 
 _subdirectory: template
 
 _exclude:
+  - "{% if not include_dockerfiles %}{{project_name}}/Dockerfile{% endif %}"
+  - "{% if not include_dockerfiles %}{{project_name}}/Dockerfile.dev{% endif %}"
   - "{% if not include_demo %}{{project_name}}/src/{{module_name}}_demo{% endif %}"
   - "{% if not include_examples %}{{project_name}}/examples{% endif %}"
 

@@ -7,14 +7,33 @@
 
 ## Installation
 
-### Install from pypi:
+This will install the latest release from pypi via uv:
 
-This will install the latest release from pypi via pip:
-
-```bash
-pip install {{ project_name }}
+```shell
+uv add {{ project_name }}
 ```
 
 
 ## Using
 
+Here, you should add documentation about basic usage for your project!
+
+{% if include_demo %}
+
+## Run the demo
+
+To see the features in action, you can run the demo in an isolated environment with `uv`:
+
+```shell
+uvx --from {{ project_name }} {{ project_name }}-demo
+```
+
+You can check out options available by passing `--help` to the command.
+
+{% endif %}
+
+---
+
+## Learn about more features
+
+Go to the [Features](features.md) page to learn about all the features `roadshow` provides.

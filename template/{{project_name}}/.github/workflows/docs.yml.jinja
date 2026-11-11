@@ -7,7 +7,10 @@ on:
       - main
     paths:
       - 'docs/**'
+      - 'examples/**'
       - 'src/{{ module_name }}/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
 
 jobs:
   docs:
@@ -20,7 +23,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v1
 
     - name: Set up Python
       run: uv python install {{ default_python_version }}

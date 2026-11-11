@@ -12,10 +12,10 @@ _{{ project_summary }}_
 
 Requires: Python {{ python_versions[0] }} to {{ python_versions[-1] }}
 
-Install through pip:
+Install through uv:
 
-```bash
-pip install {{ project_name }}
+```shell
+uv add {{ project_name }}
 ```
 
 
@@ -23,3 +23,15 @@ pip install {{ project_name }}
 
 The complete documentation can be found at the
 [{{ project_name }} home page](https://{{ github_account }}.github.io/{{ project_name }})
+{% if include_demo %}
+
+
+## Demo
+
+
+To see the features in action, you can run the demo in an isolated environment with `uv`:
+
+```shell
+uvx --from {{ project_name }} {{ project_name }}-demo
+```
+{% endif %}

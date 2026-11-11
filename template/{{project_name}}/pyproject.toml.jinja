@@ -19,34 +19,29 @@ changelog = "https://github.com/{{ github_account }}/{{project_name}}/blob/main/
 
 {% if include_demo %}
 [project.optional-dependencies]
-demo = [
-    "rich>=14.0",
-    "snick>=3.0",
-    "typer>=0.24.1",
-]
+demo = [ "roadshow>=0.1.2" ]
 
 [project.scripts]
-{{ module_name }}-demo = "{{ module_name }}_demo.main:main"
+{{ project_name }}-demo = "{{ module_name }}_demo.main:main"
 {% endif %}
 
 
 [dependency-groups]
 dev = [
     "debugpy>=1.8",
-    "ipython>=8.18",
-    "mkdocs-material>=9.6",
+    "ipython>=9.18",
     "mkdocstrings[python]>=0.29",
-    "pyclean>=3.1",
-    "pygments>=2.19",
-    "pytest>=8.3",
-    "pytest-bdd>=7.0",
-    "pytest-cov>=6.0",
-    "pytest-mock>=3.14",
-    "pytest-pretty>=1.2",
-    "pytest-random-order>=1.1",
-    "ruff>=0.11",
-    "ty>=0.0",
-    "typos>=1.31",
+    "pyclean>=3.7",
+    "pytest>=9.2",
+    "pytest-bdd>=9.0",
+    "pytest-cov>=7.1",
+    "pytest-mock>=3.17",
+    "pytest-pretty>=1.3",
+    "pytest-random-order>=1.2",
+    "ruff>=0.17.4",
+    "ty>=0.0.100",
+    "typos>=1.52",
+    "zensical>=0.1.1 "
 ]
 
 
@@ -59,7 +54,7 @@ addopts = [
     "--random-order",
     "--cov=src/{{ module_name }}",
     "--cov-report=term-missing",
-    "--cov-fail-under=85",
+    "--cov-fail-under=100",
     "--cov-report=xml:.coverage.xml",
     "--junitxml=.junit.xml",
     "--override-ini=junit_family=legacy",
@@ -86,5 +81,5 @@ extend-ignore-identifiers-re = []
 
 
 [build-system]
-requires = ["uv-build>=0.1.0"]
+requires = ["uv-build>=0.13.7,<0.14"]
 build-backend = "uv_build"

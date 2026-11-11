@@ -1,6 +1,5 @@
-from importlib import metadata
-
 import tomllib
+from importlib import metadata
 
 
 def get_version_from_metadata() -> str:
